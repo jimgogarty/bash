@@ -1,0 +1,59 @@
+#!/bin/bash 
+
+# This program will create a new Github Repo on-line
+#using my API key. 
+
+#all git hub scripts are stored in the  ~/scripts Dir 
+#and will get it's arguments from the command line
+#You will need to install curl on your system to run this program
+#
+#arguments from running program
+filename="$1"
+#description needs to be any other arguments
+description="$2"
+echo $description
+
+
+loop=1
+scripts_dir="/home/jim/scripts/*"
+uname="jimgogarty"
+NAME="Jim"
+
+apikey=$(cat /home/jim/scripts/.apikey.txt)
+#if the numner of args is equal to 0, print error and exit the program
+if [ $# -eq 0 ];then 
+	echo "You have not given a File name after calling the program."
+	echo "For example \" ./github counting.sh\"."
+	exit 1;
+else
+
+	while [ $loop -eq 1 ]; do
+		if   [[ ! -d $file_name ]]  && [[ $PWD == $scripts_dir ]]  ; then 
+			clear	
+			echo "We will now create the New Repo online"
+
+			#create file or dir and file
+			
+			curl -i -H 'Authorization: token '$apikey' ' -d '{ "name": "'"$filename"'", "auto_init": true, "private": false, "gitignore_template": "nanoc" }' https://api.github.com/user/repos &> /dev/null
+
+			# if the repo has been created successfully the Dir will be created
+			#else an error will print
+			if [ $? -eq 0 ] ; then 
+				
+				#now make the Dir and create a README.md and push a first commit to the repo.
+				git clone git@github.com:"$uname"/"$filename".git
+				echo " Online Repo and Local Repo created."
+				read -p  "Press any key to finish."
+				clear
+				loop=0
+			else 
+				echo "ERROR Repo not created : $?."
+				exit
+			fi
+		fi
+
+
+	done
+fi
+	 
+#end of program	
